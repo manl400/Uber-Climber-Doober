@@ -330,81 +330,112 @@ end
 local function gameLoop()
 
 
-	--for 
-
-
-
-	if DooberForceX < MaxSpeedX and doober.leftMove == 1 and doober.rightMove == 0 then
-		DooberForceX = DooberForceX - SpeedAmount
-	elseif DooberForceX > -MaxSpeedX and doober.leftMove == 0 and doober.rightMove == 1 then
-		DooberForceX = DooberForceX + SpeedAmount
-	end
-
-
-
-
-	if doober.leftMove == 0 and doober.rightMove == 0 then
-		if DooberForceX ~= 0 and DooberForceX > 0 then
-			DooberForceX = DooberForceX - (SpeedAmount*2)
-		elseif DooberForceX ~= 0 and DooberForceX < 0 then
-			DooberForceX = DooberForceX + (SpeedAmount*2)
-		end
-		
-	end
+	for i = 1 , table.getn(Array_of_Platforms) do
 	
-	if DooberForceX > MaxSpeedX then
+	--Array_of_Platforms[i].x = Array_of_Platforms[i].x + 20
 	
-	DooberForceX = MaxSpeedX;
-	
-	elseif DooberForceX < -MaxSpeedX then
-	
-	DooberForceX = -MaxSpeedX;
-	
-	end
-	
-	
-	
-	--check for falling scree boarders
-	if doober.x > display.actualContentWidth then
-		DooberForceX = -1;
-	elseif doober.x < 0 then
-		DooberForceX = 1;
-	end
-	
-	
-	
-	--Gravity
-	if DooberForceY > -30 then
-	
-	DooberForceY = DooberForceY - JumpGravity;
+	--print(Array_of_Platforms[i].y)
 	
 	end
 
-	
-	
-	
-	--doober.x = doober.x + DooberForceX
-	
-	--Doober:setLinearVelocity( DooberForceX, 0 )
-	
-	--doober.y = doober.y - DooberForceY
-	
-	
-	--Ground Check
-	if doober.y+60 > GroundTemp.y then
-	
-	DooberForceY = 0;
-	
-	--doober.y = doober.y - 1;
-	
-	end
+	UpdateMap()
 	
 	
 	
 	
 end
 
---gameLoopTimer = timer.performWithDelay(10, gameLoop, 0)
+gameLoopTimer = timer.performWithDelay(10, gameLoop, 0)
+
+
+
+
+
+-- This updates the map and puts new platforms down;
+function UpdateMap()
+
+-- This is how many across
+local Amount_of_Platforms = 3; 
+
+-- Change these number to fit better just putting rouf numbers
+local MinX = 100; 
+local MaxX = 600; 
+local Spawn_DIFF = 180;
+
+OFFSETY = 1;
+
+
+-- update Offset (for panning)
+-- Needs to be size of loop. idk if arrays start at y
+for i = 1, table.getn(Array_of_Platforms) do
+
+    -- This will push its Y for cam track
+    Array_of_Platforms[i].y = Array_of_Platforms[i].y + OFFSETY
+    
+    -- Also do player cam update as well.
+    doober.y = doober.y + OFFSETY
+    
+    OFFSETY = 0;
+
+end
+
+-- Need to get the value of Y for the last platfor in the array
+if Array_of_Platforms[#Array_of_Platforms].y>Spawn_DIFF then
+
+-- use this for finding points to spawn
+local Offset_off = 100;
+local Array_OF_Points = {MinX, (MinX+100)*1, (MinX+100)*2, (MinX+100)*3, (MinX+100)*4}
+
+
+local HowManyToSpawn = math.random(3)
+
+for i = 1, HowManyToSpawn do
+
+	if 2 == math.random(2) then
+
+
+
+        local TargetSpawn = math.random (5)
+        --makes a platforms this should work but that funtion will need setup see above
+        New_Platform(Array_OF_Points[TargetSpawn],-30)
+    
+    
+
+    end
+
+end
+
+
+    -- check if the platfor is off the screen.
+    for i = 0, table.getn(Array_of_Platforms) do
+
+        -- This will push its Y for cam track
+        --if Array_of_Platforms[i].y > display.actualContentHeight then
+        
+        --Array_of_Platforms[i].delete -- not sure what command to use for this.
+		--table.remove(Array_of_Platforms,i)
+        --but this is the one in the array that needs to be deleted the i.
+        
+        --end
+        
+    
+
+    end
+
+end
+
+
+end 
+
+
+
+
+
+
+
+
+
+
 
 
 function scene:create( event )
@@ -424,6 +455,13 @@ function scene:create( event )
 	createLeftMoveArea()
 	createRightMoveArea()
 	createJumpMoveArea()
+	
+	
+	New_Platform (100,100)
+	New_Platform (200,300)
+	New_Platform (100,800)
+	New_Platform (350,800)
+	New_Platform (650,800)
 	
 	
 	makeDoober()
