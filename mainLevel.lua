@@ -10,6 +10,8 @@ local scene = composer.newScene()
 -- include Corona's "physics" library
 local physics = require "physics"
 
+physics.setDrawMode( "hybrid" )
+
 local playerDirectionRight = -1 
 local playerDirectionLeft = 1
 
@@ -18,9 +20,7 @@ local leftMove, rightMove, jumpMove
 local background, GroundTemp
 
 local motionx = 0
-local motiony = 0
 local dooberSpeed = 5
-local dooberJumpSpeed = 5
 
 local DooberForceX = 0.0 --might not need these too
 local DooberForceY = 0.0
@@ -191,7 +191,8 @@ local function makeDoober()
 	doober.y = 350
 	doober.rightMove = 0
 	doober.leftMove = 0
-	physics.addBody(doober, "dynamic", {friction=0.3})
+	local boundery = { -21, -35, 20, -35, -20, 30, 20, 30  }
+	physics.addBody(doober, "dynamic", {shape = boundery, friction=0.3})
 end	
 
 -------------------------------------
@@ -270,7 +271,7 @@ end
 local function jumpListener (event) -- Haven't finished this, can be modeled after touchListener
 	
 	print("jumpMove!")
-	
+	doober:setLinearVelocity(0, -200)
 	--DooberForceY = 25;
 	
 	return true
@@ -305,7 +306,7 @@ local function createJumpMoveArea()
 	jumpMove.name = "jumpMove"
 	jumpMove.isVisible = false
 	jumpMove.isHitTestable = true
-	jumpMove:addEventListener("tap", jumpListener)
+	jumpMove:addEventListener("touch", jumpListener)
 end
 -------------------------------------
 
@@ -468,6 +469,8 @@ function scene:create( event )
 	sceneGroup:insert( background )
 	sceneGroup:insert( doober )
 	sceneGroup:insert( GroundTemp )
+	
+	doober:toFront()
 	
 	
 end
