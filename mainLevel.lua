@@ -369,15 +369,22 @@ OFFSETY = 1;
 -- Needs to be size of loop. idk if arrays start at y
 for i = 1, table.getn(Array_of_Platforms) do
 
+
     -- This will push its Y for cam track
     Array_of_Platforms[i].y = Array_of_Platforms[i].y + OFFSETY
     
     -- Also do player cam update as well.
+	if i == 1 then
+	
     doober.y = doober.y + OFFSETY
+	
+	GroundTemp.y = GroundTemp.y + OFFSETY
     
-    OFFSETY = 0;
+	end
 
 end
+
+    OFFSETY = 0;
 
 -- Need to get the value of Y for the last platfor in the array
 if Array_of_Platforms[#Array_of_Platforms].y>Spawn_DIFF then
@@ -406,17 +413,20 @@ for i = 1, HowManyToSpawn do
 end
 
 
+print(table.getn(Array_of_Platforms))
+
     -- check if the platfor is off the screen.
-    for i = 0, table.getn(Array_of_Platforms) do
+	for i = 1, table.getn(Array_of_Platforms) do
 
         -- This will push its Y for cam track
-        --if Array_of_Platforms[i].y > display.actualContentHeight then
+        if Array_of_Platforms[i].y > display.actualContentHeight then
         
         --Array_of_Platforms[i].delete -- not sure what command to use for this.
-		--table.remove(Array_of_Platforms,i)
+		table.remove(Array_of_Platforms,i)
+		break
         --but this is the one in the array that needs to be deleted the i.
         
-        --end
+        end
         
     
 
