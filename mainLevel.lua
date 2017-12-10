@@ -22,6 +22,8 @@ local background, GroundTemp
 local motionx = 0
 local dooberSpeed = 5
 
+
+
 local DooberForceX = 0.0 --might not need these too
 local DooberForceY = 0.0
 local MaxSpeedX = 8.0
@@ -29,6 +31,7 @@ local MaxSpeedY = 7.0
 local SpeedAmount = 1.0
 local JumpGravity = 1
 
+local platform_bound = { -60, -15, 60, -15, -60, 15, 60, 15  }
 
  -- The platforms should be put in this array
 local Array_of_Platforms = {}
@@ -43,9 +46,8 @@ local function New_Platform (x,y)
 local NewPlatform
 
 	NewPlatform = display.newRect(x, y, 120, 30)
-	physics.addBody(NewPlatform, "static", {friction=0.5})
-
-
+	physics.addBody(NewPlatform, "static", {friction=0.5}, {box= {halfWidth=60, halfHeight=10, x=0, y=15}, isSensor = true} )
+	
 table.insert(Array_of_Platforms,NewPlatform)
 
 end
@@ -191,8 +193,10 @@ local function makeDoober()
 	doober.y = 350
 	doober.rightMove = 0
 	doober.leftMove = 0
-	local boundery = { -21, -35, 20, -35, -20, 30, 20, 30  }
+	local boundery = { -17, -35, 17, -35, -15, 30, 13, 30  }
 	physics.addBody(doober, "dynamic", {shape = boundery, friction=0.3})
+	
+	doober.isFixedRotation = true
 end	
 
 -------------------------------------
@@ -362,7 +366,7 @@ local MinX = 100;
 local MaxX = 600; 
 local Spawn_DIFF = 180;
 
-OFFSETY = 1;
+OFFSETY = 0;
 
 
 -- update Offset (for panning)
@@ -430,14 +434,6 @@ end
 
 
 
-
-
-
-
-
-
-
-
 function scene:create( event )
 	-- Called when the scene's view does not exist.
 	-- 
@@ -470,6 +466,7 @@ function scene:create( event )
 	sceneGroup:insert( doober )
 	sceneGroup:insert( GroundTemp )
 	
+	
 	doober:toFront()
 	
 	
@@ -481,6 +478,7 @@ function scene:show( event )
 	
 	if phase == "will" then
 		-- Called when the scene is still off screen and is about to move on screen
+		
 	elseif phase == "did" then
 		-- Called when the scene is now on screen
 		-- 
