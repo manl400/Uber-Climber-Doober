@@ -18,7 +18,9 @@ local leftMove, rightMove, jumpMove
 local background, GroundTemp
 
 local motionx = 0
+local motiony = 0
 local dooberSpeed = 5
+local dooberJumpSpeed = 5
 
 local DooberForceX = 0.0 --might not need these too
 local DooberForceY = 0.0
