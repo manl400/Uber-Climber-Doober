@@ -17,6 +17,9 @@ local Doober
 local leftMove, rightMove, jumpMove
 local background, GroundTemp
 
+local motionx = 0
+local dooberSpeed = 5
+
 local DooberForceX = 0.0 --might not need these too
 local DooberForceY = 0.0
 local MaxSpeedX = 8.0
@@ -184,6 +187,8 @@ local function makeDoober()
 	doober = display.newSprite(dooberSheet, seq_doober)
 	doober.x = display.actualContentWidth/2
 	doober.y = 350
+	doober.rightMove = 0
+	doober.leftMove = 0
 	physics.addBody(doober, "dynamic", {friction=0.3})
 end	
 
@@ -197,12 +202,10 @@ local function leftMoveBegin()
 	print("leftMove!")
 	doober.xScale = playerDirectionLeft
 	doober:setSequence("runningStance")
-		doober.right = 0
-
-	
-	
+	--doober.right = 0
 	--doober:applyForce( -1, 0, 80, 80 )
 	doober.leftMove = 1
+	motionx = -dooberSpeed
 	doober:play()
 end	
 
@@ -211,14 +214,19 @@ local function rightMoveBegin()
 	doober.xScale = playerDirectionRight
 	doober:setSequence("runningStance")
 	--doober:applyForce( 1, 0, 80, 80 )
-			doober.leftMove = 0
+	--doober.leftMove = 0
 	doober.rightMove = 1
+	motionx = dooberSpeed
 	doober:play()
 end
 
 local function moveEnd()
 	doober:setSequence("idleStance")
 	doober:play()
+end
+
+local function movePlayer(event)
+	doober.x = doober.x + motionx
 end
 -------------------------------------
 
@@ -227,14 +235,22 @@ end
 -- Touch Listeners (Where stuff happens when clicking the left, right, and jump area)
 local function touchListener (event) 
 	if(event.phase == "began") then
+		display.getCurrentStage():setFocus( event.target, event.id )
 		if event.target.name == "leftMove" then
 			leftMoveBegin()
+			if doober.leftMove == 1 then
+				
+			end
 			-- Add more code when left button is clicked
 		elseif event.target.name == "rightMove" then
 			rightMoveBegin()
+			if doober.rightMove == 1 then
+				
+			end
 			-- Add more code when right button is clicked
 		end
 	elseif( event.phase == "ended") then
+		display.getCurrentStage():setFocus( event.target, nil )
 		if event.target.name == "leftMove" then
 			doober.leftMove = 0
 		elseif event.target.name == "rightMove" then
@@ -242,15 +258,18 @@ local function touchListener (event)
 		end
 		if doober.leftMove == 0 and doober.rightMove == 0 then
 			moveEnd()
+			motionx = 0;
 		end
+		
 	end
+	return true
 end
 
 local function jumpListener (event) -- Haven't finished this, can be modeled after touchListener
 	
 	print("jumpMove!")
 	
-	DooberForceY = 25;
+	--DooberForceY = 25;
 	
 	return true
 end
@@ -301,17 +320,6 @@ local function createTempPlatform() -- use as ground
 	physics.addBody(GroundTemp, "static", {friction=0.5})
 end
 -------------------------------------
-
-
-
---
-
-
-
-
-
-
-
 
 
 -- Game LOOP
@@ -393,33 +401,7 @@ local function gameLoop()
 	
 end
 
-gameLoopTimer = timer.performWithDelay(10, gameLoop, 0)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+--gameLoopTimer = timer.performWithDelay(10, gameLoop, 0)
 
 
 function scene:create( event )
@@ -462,6 +444,7 @@ function scene:show( event )
 		-- INSERT code here to make the scene come alive
 		-- e.g. start timers, begin animation, play audio, etc.
 		doober:play()
+		Runtime:addEventListener("enterFrame", movePlayer)
 		physics.start()
 	end
 end
